@@ -146,13 +146,13 @@ void Editor::DrawPlaylist(Rect area) {
         playlistZoom = std::clamp(playlistZoom * (Input::MouseWheel() > 0 ? 1.25f : 0.8f), 1.0f, 24.0f);
 
     const Vec2 at = Fx::BeginScrollArea(inside, {total + 200, ruler + blockHeight}, playlistScroll);
-    const Rect view = Fx::ScrollView();
+    const Rect shown = Fx::ScrollView();
     // The ruler: a tick every bar, numbered.
-    UI::Rect({view.X, at.Y, view.Width, ruler}, Fx::Derive(palette.Background, -0.2f));
+    UI::Rect({shown.X, at.Y, shown.Width, ruler}, Fx::Derive(palette.Background, -0.2f));
     const float bar = float(BarRows(song)) * playlistZoom;
     for (int b = 0; float(b) * bar < total + 200; ++b) {
         const float x = at.X + float(b) * bar;
-        if (x < view.X - bar || x > view.Right()) continue;
+        if (x < shown.X - bar || x > shown.Right()) continue;
         UI::Rect({x, at.Y + 10, 1, ruler - 10}, palette.BoxBorder);
         if (bar >= 24 || b % 4 == 0) Text::Draw(std::to_string(b + 1), {x + 3, at.Y + 2}, Mono(palette.PromptText, 1));
     }
@@ -228,7 +228,7 @@ void Editor::DrawPlaylist(Rect area) {
         const float x = at.X + starts[std::size_t(position.Order)] + float(position.Row) * playlistZoom;
         UI::Rect({x, at.Y, 2, ruler + blockHeight}, Color::Hex(0x7FD0FF));
     }
-    if (song.Order.empty()) Fx::Label({view.X + 10, at.Y + ruler, view.Width - 20, 30}, Tr("playlist.empty"));
+    if (song.Order.empty()) Fx::Label({shown.X + 10, at.Y + ruler, shown.Width - 20, 30}, Tr("playlist.empty"));
     Fx::EndScrollArea();
 
     // Patterns dropped from the explorer go in where they fall; entries dragged along the playlist move.

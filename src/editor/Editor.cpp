@@ -857,17 +857,17 @@ void Editor::DrawDialog() {
     if (dialog == Dialog::Properties) {
         const Rect inside = Fx::BeginDialog(Rect::FromCenter(Screen::Center(), {420, 300}), Tr("dialog.properties.title"));
         float y = inside.Y;
-        auto row = [&](std::string_view text) {
+        auto line = [&](std::string_view text) {
             Fx::Label({inside.X, y, inside.Width * 0.5f, 28}, text);
             const Rect r{inside.X + inside.Width * 0.5f, y, inside.Width * 0.5f, 28};
             y += 36;
             return r;
         };
-        if (Fx::Spinner(row(Tr("transport.bpm")), song.Bpm, 20, 400, 1, 0)) Touch();
-        if (Fx::Spinner(row(Tr("dialog.properties.rows")), song.Rows, 1, 16)) Touch();
-        if (Fx::Spinner(row(Tr("dialog.properties.beats")), song.Beats, 1, 16)) Touch();
-        if (Fx::Slider(row(Tr("dialog.properties.volume")), song.Volume, 0, 1, 0.05f)) Touch();
-        if (Fx::Spinner(row(Tr("dialog.properties.loop")), song.Loop, -1, std::max(0, int(song.Order.size()) - 1))) Touch();
+        if (Fx::Spinner(line(Tr("transport.bpm")), song.Bpm, 20, 400, 1, 0)) Touch();
+        if (Fx::Spinner(line(Tr("dialog.properties.rows")), song.Rows, 1, 16)) Touch();
+        if (Fx::Spinner(line(Tr("dialog.properties.beats")), song.Beats, 1, 16)) Touch();
+        if (Fx::Slider(line(Tr("dialog.properties.volume")), song.Volume, 0, 1, 0.05f)) Touch();
+        if (Fx::Spinner(line(Tr("dialog.properties.loop")), song.Loop, -1, std::max(0, int(song.Order.size()) - 1))) Touch();
         UI::Tooltip(Tr("dialog.properties.loop.tip"));
         const bool close = Fx::DefaultButton({inside.Right() - 110, inside.Bottom() - 30, 110, 30}, Tr("dialog.close")) ||
                            back || enter;
