@@ -50,8 +50,10 @@ int Editor::ChannelCount() {
 
 std::string Editor::StepNote(int track) {
     if (const auto found = stepNotes.find(track); found != stepNotes.end()) return found->second;
-    if (const Pattern* p = Current())
-        for (const NoteBlock& block : Blocks(*p, track)) return NoteName(block.Note);
+    if (const Pattern* p = Current()) {
+        const std::vector<NoteBlock> blocks = Blocks(*p, track);
+        if (!blocks.empty()) return NoteName(blocks.front().Note);
+    }
     return "C4";
 }
 
@@ -367,12 +369,12 @@ void Editor::DrawPianoRoll(Rect area) {
     const bool sounds = Sounding(sounding);
     const Fx::GridInput in = Fx::BeginGrid(gridArea, pianoGrid);
     // Black keys a little darker, and a line on every C.
-    const Rect view = Fx::ScrollView();
+    const Rect shown = Fx::ScrollView();
     for (int r = 0; r < 128; ++r) {
         const Rect first = Fx::GridCell(0, r);
-        if (first.Bottom() < view.Y || first.Y > view.Bottom()) continue;
-        if (IsBlackKey(127 - r)) UI::Rect({view.X, first.Y, view.Width, first.Height}, Colors::Black.WithAlpha(0.12f));
-        if ((127 - r) % 12 == 0) UI::Rect({view.X, first.Bottom() - 1, view.Width, 1}, palette.BoxBorder.WithAlpha(0.6f));
+        if (first.Bottom() < shown.Y || first.Y > shown.Bottom()) continue;
+        if (IsBlackKey(127 - r)) UI::Rect({shown.X, first.Y, shown.Width, first.Height}, Colors::Black.WithAlpha(0.12f));
+        if ((127 - r) % 12 == 0) UI::Rect({shown.X, first.Bottom() - 1, shown.Width, 1}, palette.BoxBorder.WithAlpha(0.6f));
     }
     // The other channels as grey ghosts, then this one's notes.
     for (int c = 0; c < channels; ++c) {
@@ -401,7 +403,7 @@ void Editor::DrawPianoRoll(Rect area) {
     if (rollDrag != RollDrag::None && in.Dragging) drawBlock(rollBlock, color.WithAlpha(0.6f), true);
     if (sounds) {
         const Rect column = Fx::GridCell(sounding, 0);
-        UI::Rect({column.X, view.Y, 2, view.Height}, Color::Hex(0x7FD0FF));
+        UI::Rect({column.X, shown.Y, 2, shown.Height}, Color::Hex(0x7FD0FF));
     }
     Fx::EndGrid();
 
@@ -548,12 +550,12 @@ void Editor::DrawTracker(Rect area) {
     Screen::PopClip();
 
     const Fx::GridInput in = Fx::BeginGrid(gridArea, trackerGrid);
-    const Rect view = Fx::ScrollView();
+    const Rect shown = Fx::ScrollView();
     for (int r = 0; r < p.Length; ++r) {
         const Rect first = Fx::GridCell(0, r);
-        if (first.Bottom() < view.Y || first.Y > view.Bottom()) continue;
-        if (r % std::max(1, song.Rows) == 0) UI::Rect({view.X, first.Y, std::min(view.Width, float(channels) * cell.X), first.Height}, Colors::White.WithAlpha(0.04f));
-        if (sounds && r == sounding) UI::Rect({view.X, first.Y, std::min(view.Width, float(channels) * cell.X), first.Height}, Color::Hex(0x7FD0FF, 0.18f));
+        if (first.Bottom() < shown.Y || first.Y > shown.Bottom()) continue;
+        if (r % std::max(1, song.Rows) == 0) UI::Rect({shown.X, first.Y, std::min(shown.Width, float(channels) * cell.X), first.Height}, Colors::White.WithAlpha(0.04f));
+        if (sounds && r == sounding) UI::Rect({shown.X, first.Y, std::min(shown.Width, float(channels) * cell.X), first.Height}, Color::Hex(0x7FD0FF, 0.18f));
         for (int c = 0; c < channels; ++c) {
             const Rect box = Fx::GridCell(c, r);
             const std::string text = GetNote(p, c, r);

@@ -104,7 +104,7 @@ void Editor::DrawInstrument(Rect area) {
     const float width = Fx::ScrollView().Width - 4, labelWidth = std::min(110.0f, width * 0.4f);
     float y = at.Y;
     const Color accent = Fx::GetPalette().Accent;
-    auto row = [&](std::string_view label, std::string value = {}) {
+    auto line = [&](std::string_view label, std::string value = {}) {
         Fx::Label({at.X, y, labelWidth, rowHeight}, label);
         const float valueWidth = value.empty() ? 0.0f : 52.0f;
         if (!value.empty()) Fx::Label({at.X + width - valueWidth, y, valueWidth, rowHeight}, value, Align::Right);
@@ -117,35 +117,35 @@ void Editor::DrawInstrument(Rect area) {
     int wave = std::max(0, IndexOf(Waves, in.Wave));
     std::vector<std::string> waveNames;
     for (const std::string& w : Waves) waveNames.push_back(Tr("wave." + w));
-    if (Fx::ComboBox(row(Tr("instrument.wave")), wave, waveNames)) {
+    if (Fx::ComboBox(line(Tr("instrument.wave")), wave, waveNames)) {
         in.Wave = Waves[std::size_t(wave)];
         Touch();
     }
     DrawWave({at.X, y, width, 86}, in, accent);
     y += 94;
-    if (Fx::Slider(row(Tr("instrument.volume"), std::format("{:.2f}", in.Volume)), in.Volume, 0, 1, 0.01f)) Touch();
-    if (Fx::Slider(row(Tr("instrument.width"), std::format("{:.3f}", in.Width)), in.Width, 0.05f, 0.95f, 0.005f, in.Wave == "square"))
+    if (Fx::Slider(line(Tr("instrument.volume"), std::format("{:.2f}", in.Volume)), in.Volume, 0, 1, 0.01f)) Touch();
+    if (Fx::Slider(line(Tr("instrument.width"), std::format("{:.3f}", in.Width)), in.Width, 0.05f, 0.95f, 0.005f, in.Wave == "square"))
         Touch();
     DrawEnvelope({at.X, y, width, 86}, in, accent);
     y += 94;
-    if (Fx::Slider(row(Tr("instrument.attack"), seconds(in.Attack)), in.Attack, 0, 2, 0.005f)) Touch();
-    if (Fx::Slider(row(Tr("instrument.decay"), seconds(in.Decay)), in.Decay, 0, 2, 0.005f)) Touch();
-    if (Fx::Slider(row(Tr("instrument.sustain"), std::format("{:.2f}", in.Sustain)), in.Sustain, 0, 1, 0.01f)) Touch();
-    if (Fx::Slider(row(Tr("instrument.release"), seconds(in.Release)), in.Release, 0, 3, 0.005f)) Touch();
-    if (Fx::Slider(row(Tr("instrument.lowpass"), in.LowPass >= 1 ? Tr("instrument.off") : std::format("{:.2f}", in.LowPass)),
+    if (Fx::Slider(line(Tr("instrument.attack"), seconds(in.Attack)), in.Attack, 0, 2, 0.005f)) Touch();
+    if (Fx::Slider(line(Tr("instrument.decay"), seconds(in.Decay)), in.Decay, 0, 2, 0.005f)) Touch();
+    if (Fx::Slider(line(Tr("instrument.sustain"), std::format("{:.2f}", in.Sustain)), in.Sustain, 0, 1, 0.01f)) Touch();
+    if (Fx::Slider(line(Tr("instrument.release"), seconds(in.Release)), in.Release, 0, 3, 0.005f)) Touch();
+    if (Fx::Slider(line(Tr("instrument.lowpass"), in.LowPass >= 1 ? Tr("instrument.off") : std::format("{:.2f}", in.LowPass)),
                    in.LowPass, 0.01f, 1, 0.01f))
         Touch();
     UI::Tooltip(Tr("instrument.lowpass.tip"));
-    if (Fx::Spinner(row(Tr("instrument.crush")), in.Crush, 0, 64)) Touch();
+    if (Fx::Spinner(line(Tr("instrument.crush")), in.Crush, 0, 64)) Touch();
     UI::Tooltip(Tr("instrument.crush.tip"));
-    if (Fx::Spinner(row(Tr("instrument.downsample")), in.Downsample, 1, 64)) Touch();
+    if (Fx::Spinner(line(Tr("instrument.downsample")), in.Downsample, 1, 64)) Touch();
     UI::Tooltip(Tr("instrument.downsample.tip"));
-    const Rect panRow = row(Tr("instrument.pan"), std::format("{:+.2f}", in.Pan));
+    const Rect panRow = line(Tr("instrument.pan"), std::format("{:+.2f}", in.Pan));
     if (Fx::Knob({panRow.X, panRow.Y, panRow.Height, panRow.Height}, in.Pan, -1.0f, 1.0f, 0.02f, 0.0f)) Touch();
-    if (Fx::Spinner(row(Tr("instrument.sweep")), in.Sweep, -48, 48, 1, 0)) Touch();
+    if (Fx::Spinner(line(Tr("instrument.sweep")), in.Sweep, -48, 48, 1, 0)) Touch();
     UI::Tooltip(Tr("instrument.sweep.tip"));
-    if (Fx::Slider(row(Tr("instrument.sweep.time"), seconds(in.SweepTime)), in.SweepTime, 0.005f, 1, 0.005f)) Touch();
-    if (Fx::Spinner(row(Tr("instrument.transpose")), in.Transpose, -48, 48, 1, 0)) Touch();
+    if (Fx::Slider(line(Tr("instrument.sweep.time"), seconds(in.SweepTime)), in.SweepTime, 0.005f, 1, 0.005f)) Touch();
+    if (Fx::Spinner(line(Tr("instrument.transpose")), in.Transpose, -48, 48, 1, 0)) Touch();
     Fx::EndScrollArea();
 }
 
