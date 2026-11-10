@@ -1,0 +1,19 @@
+{
+  "name": "bitmusic",
+  "version": "0.1.0",
+  "description": "BitMusic, a music editor for games on BitMotor (the engine's dependencies).",
+  "dependencies": [
+    {
+      "name": "imgui",
+      "features": ["sdl3-binding", "sdlgpu3-binding"]
+    },
+    "miniaudio",
+    "nlohmann-json",
+    {
+      "name": "sdl3",
+      "features": ["vulkan"]
+    },
+    "stb"
+  ],
+  "builtin-baseline": "5d68747adeb88f05aac8ca4d18d29e50296509b1"
+}

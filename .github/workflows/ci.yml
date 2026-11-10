@@ -1,0 +1,79 @@
+# Builds BitMusic and BitMotor on Linux and runs the unit tests (BitMusicTests) and the CLI on the demo song.
+#
+# BitMotor is public: the workflow uses its branch with the same name as the one being built when it exists, and
+# main otherwise, so a change that touches both repositories is built together.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-cache
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: bitmusic
+
+      - name: Pick the BitMotor branch
+        id: engine
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+        run: |
+          url="https://github.com/juanantoniomorenomoguel/BitMotor.git"
+          if git ls-remote --exit-code --heads "$url" "$BRANCH" > /dev/null; then ref="$BRANCH"; else ref=main; fi
+          echo "BitMotor: $ref"
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: juanantoniomorenomoguel/BitMotor
+          ref: ${{ steps.engine.outputs.ref }}
+          path: BitMotor
+
+      - name: System packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build pkg-config autoconf automake libtool \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxinerama-dev libxss-dev \
+            libxtst-dev libxkbcommon-dev libwayland-dev wayland-protocols libegl1-mesa-dev libgl1-mesa-dev \
+            libdecor-0-dev libasound2-dev libpulse-dev libpipewire-0.3-dev libudev-dev libdbus-1-dev \
+            libxcb1-dev libx11-xcb-dev python3-jinja2
+
+      - name: vcpkg
+        run: |
+          baseline=$(python3 -c "import json;print(json.load(open('bitmusic/vcpkg.json'))['builtin-baseline'])")
+          git clone https://github.com/microsoft/vcpkg.git
+          git -C vcpkg checkout "$baseline"
+          ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
+          mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
+
+      - uses: actions/cache@v4
+        with:
+          path: vcpkg-cache
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('bitmusic/vcpkg.json') }}
+          restore-keys: vcpkg-${{ runner.os }}-
+
+      - name: Configure
+        run: >
+          cmake -S bitmusic -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DBITMOTOR_PATH=${{ github.workspace }}/BitMotor
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Command line
+        run: |
+          build/bin/BitMusic info bitmusic/assets/examples/demo.bitmusic
+          build/bin/BitMusic export bitmusic/assets/examples/demo.bitmusic --wav demo.wav --passes 2
+          test -s demo.wav

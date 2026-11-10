@@ -1,0 +1,17 @@
+build/
+out/
+.cache/
+CMakeUserPresets.json
+*.spv
+vcpkg_installed/
+
+# IDE
+.vs/
+.vscode/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+dist/
+build-dist/
