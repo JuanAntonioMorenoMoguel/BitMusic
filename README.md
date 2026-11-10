@@ -43,8 +43,6 @@ ctest --test-dir build -C Debug --output-on-failure
 
 Mientras se desarrolla, el programa lee `assets/` y `lang/` directamente de la carpeta del código. Opciones de BitMotor útiles: `--debug` (panel de depuración, también F1), `--frames 120 --screenshot captura.png`.
 
-La CI (`.github/workflows/ci.yml`) compila BitMusic con BitMotor en Linux, pasa las pruebas y exporta la canción de ejemplo; usa la rama de BitMotor con el mismo nombre si existe, o `main`.
-
 ## Estructura
 
 | Carpeta | Contenido |
