@@ -215,6 +215,10 @@ bool Editor::OpenFile(const std::filesystem::path& file) {
     }
     StopPlaying();
     song = std::move(*loaded);
+    // Values the transport cannot show are corrected now, so the song does not open as changed.
+    song.Bpm = std::clamp(song.Bpm, 20.0f, 400.0f);
+    song.Rows = std::clamp(song.Rows, 1, 16);
+    song.Beats = std::clamp(song.Beats, 1, 16);
     path = file;
     committed = song;
     Clear(history);

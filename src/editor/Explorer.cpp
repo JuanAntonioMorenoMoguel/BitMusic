@@ -153,8 +153,8 @@ void Editor::DrawPlaylist(Rect area) {
     for (int b = 0; float(b) * bar < total + 200; ++b) {
         const float x = at.X + float(b) * bar;
         if (x < shown.X - bar || x > shown.Right()) continue;
-        UI::Rect({x, at.Y + 10, 1, ruler - 10}, palette.BoxBorder);
-        if (bar >= 24 || b % 4 == 0) Text::Draw(std::to_string(b + 1), {x + 3, at.Y + 2}, Mono(palette.PromptText, 1));
+        UI::Rect({x, at.Y + 10, 1, ruler - 10}, palette.TextColor.WithAlpha(0.5f));
+        if (bar >= 24 || b % 4 == 0) Text::Draw(std::to_string(b + 1), {x + 3, at.Y + 2}, Mono(palette.TextColor.WithAlpha(0.75f), 1));
     }
 
     // The blocks.
