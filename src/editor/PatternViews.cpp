@@ -220,17 +220,22 @@ void Editor::DrawSteps(Rect area) {
         options.insert(options.end(), instruments.begin(), instruments.end());
         int chosen = IndexOf(instruments, here) + 1;
         if (chosen == 0 && !here.empty()) {
-            options.push_back(here + " (?)");
+            options.push_back("(?) " + here);
             chosen = int(options.size()) - 1;
         }
         const Rect combo{rack.X + 28, top, 86, h};
         // The note a click on a step writes, beside the instrument.
-        Text::Draw(StepNote(c), {rack.X + 118, top + std::floor((h - 7) / 2)}, Mono(palette.TextColor.WithAlpha(0.7f), 1));
-        if (Fx::ComboBox(combo, chosen, options) && !(chosen == int(options.size()) - 1 && options.back().ends_with(" (?)"))) {
+        const auto noteStyle = Mono(palette.TextColor.WithAlpha(0.85f), 1);
+        const std::string base = StepNote(c);
+        Text::Draw(base, {rack.X + 118, top + std::round((h - Text::Measure(base, noteStyle).Y) / 2)}, noteStyle);
+        const bool lost = options.back().starts_with("(?) ");
+        if (Fx::ComboBox(combo, chosen, options) && !(lost && chosen == int(options.size()) - 1)) {
             if (std::size_t(c) >= p.Tracks.size()) p.Tracks.resize(std::size_t(c) + 1);
             p.Tracks[std::size_t(c)].Instrument = chosen == 0 ? "" : options[std::size_t(chosen)];
             Touch();
         }
+        // The track names an instrument the song does not have: a warning outline on its combo.
+        if (lost && chosen == int(options.size()) - 1) Fx::RoundedOutline(combo, 3, Color::Hex(0xE0B040), 2);
         if (std::string payload; Fx::DropTarget(line, payload) && payload.starts_with("instrument:")) {
             if (std::size_t(c) >= p.Tracks.size()) p.Tracks.resize(std::size_t(c) + 1);
             p.Tracks[std::size_t(c)].Instrument = payload.substr(11);
