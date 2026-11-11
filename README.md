@@ -49,7 +49,8 @@ Mientras se desarrolla, el programa lee `assets/` y `lang/` directamente de la c
 |---|---|
 | `include/BitMusic/`, `src/core/` | `BitMusicCore`, sin ventana ni sonido: ediciones de canciones (`Edit.h`), deshacer (`History.h`), WAV (`Wav.h`), presets (`Presets.h`) y la línea de órdenes (`Cli.h`) |
 | `src/editor/` | El editor: `Editor.cpp` (menús, transporte, diálogos, archivos, reproducción), `Explorer.cpp`, `PatternViews.cpp`, `InstrumentViews.cpp` |
-| `assets/` | La fuente Inter y una canción de ejemplo |
+| `assets/` | La fuente Inter y canciones de ejemplo (`assets/examples/`: `aventura`, `mazmorra`, `jefe`, `victoria`, `prueba-sinte` y `demo`) |
+| `tools/` | `make_examples.py`, que genera las canciones de ejemplo |
 | `lang/` | Textos en `es` y `en` |
 | `tests/` | Pruebas unitarias (`BitMusicTests`) |
 | `docs/` | El diseño del editor |
