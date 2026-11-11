@@ -1,0 +1,403 @@
+{
+  "Format": "bitmusic",
+  "Version": 1,
+  "Bpm": 100,
+  "Rows": 4,
+  "Beats": 4,
+  "Volume": 0.8,
+  "Loop": -1,
+  "Instruments": {
+    "sine": {
+      "Wave": "sine",
+      "Volume": 0.3,
+      "Attack": 0.01,
+      "Decay": 0.1,
+      "Sustain": 0.6,
+      "Release": 0.1
+    },
+    "square": {
+      "Wave": "square",
+      "Volume": 0.3,
+      "Attack": 0.01,
+      "Decay": 0.1,
+      "Sustain": 0.6,
+      "Release": 0.1
+    },
+    "saw": {
+      "Wave": "saw",
+      "Volume": 0.3,
+      "Attack": 0.01,
+      "Decay": 0.1,
+      "Sustain": 0.6,
+      "Release": 0.1
+    },
+    "triangle": {
+      "Wave": "triangle",
+      "Volume": 0.3,
+      "Attack": 0.01,
+      "Decay": 0.1,
+      "Sustain": 0.6,
+      "Release": 0.1
+    },
+    "noise": {
+      "Wave": "noise",
+      "Volume": 0.3,
+      "Attack": 0.01,
+      "Decay": 0.1,
+      "Sustain": 0.6,
+      "Release": 0.1
+    },
+    "pulse12": {
+      "Wave": "square",
+      "Width": 0.125,
+      "Volume": 0.25
+    },
+    "crushed": {
+      "Wave": "triangle",
+      "Volume": 0.35,
+      "Crush": 4,
+      "Downsample": 8
+    },
+    "dark": {
+      "Wave": "saw",
+      "Volume": 0.35,
+      "LowPass": 0.05
+    },
+    "left": {
+      "Wave": "sine",
+      "Volume": 0.4,
+      "Pan": -1
+    },
+    "right": {
+      "Wave": "sine",
+      "Volume": 0.4,
+      "Pan": 1
+    },
+    "upsweep": {
+      "Wave": "square",
+      "Volume": 0.2,
+      "Sweep": 24,
+      "SweepTime": 0.4,
+      "Sustain": 1
+    },
+    "fifth": {
+      "Wave": "triangle",
+      "Volume": 0.35,
+      "Transpose": 7
+    }
+  },
+  "Patterns": {
+    "ondas": {
+      "Length": 32,
+      "Tracks": [
+        {
+          "Instrument": "sine",
+          "Notes": [
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "square",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "saw",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "triangle",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "noise",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "pulse12",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "crushed",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "dark",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "",
+            "off"
+          ]
+        }
+      ]
+    },
+    "detalles": {
+      "Length": 32,
+      "Tracks": [
+        {
+          "Instrument": "left",
+          "Notes": [
+            "A4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "right",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "A4",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "upsweep",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C3",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "fifth",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C4",
+            "",
+            "---",
+            "",
+            "E4",
+            "",
+            "---",
+            "",
+            "G4",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "off"
+          ]
+        },
+        {
+          "Instrument": "sine",
+          "Notes": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "C5:0.25",
+            "",
+            "C5:0.5",
+            "",
+            "C5:0.75",
+            "",
+            "C5",
+            "",
+            "72",
+            "",
+            "72.5",
+            "",
+            "73",
+            "",
+            "off"
+          ]
+        }
+      ]
+    }
+  },
+  "Order": [
+    "ondas",
+    "detalles"
+  ]
+}
