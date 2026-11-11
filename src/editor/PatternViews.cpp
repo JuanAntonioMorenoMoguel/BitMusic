@@ -2,6 +2,7 @@
 #include "Editor.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <format>
 
@@ -197,14 +198,14 @@ void Editor::DrawSteps(Rect area) {
     Screen::PushClip({gridArea.X, area.Y, gridArea.Width, header});
     for (int c = 0; c < p.Length; c += std::max(1, song.Rows)) {
         const float x = gridArea.X + 1 + float(c) * cell.X - stepsGrid.Scroll.X;
-        Text::Draw(std::to_string(c / std::max(1, song.Rows) + 1), {x + 3, area.Y + 4}, Mono(palette.PromptText, 1));
+        const bool bar = c % BarRows(song) == 0;
+        Text::Draw(std::to_string(c / std::max(1, song.Rows) + 1), {x + 3, area.Y + 4},
+                   Mono(bar ? palette.TextColor : palette.TextColor.WithAlpha(0.6f), 1));
     }
     Screen::PopClip();
 
     // The channel rack: number, instrument of this pattern's track, mute and solo.
     const std::vector<std::string> instruments = Names(song, false);
-    std::vector<std::string> options = {"-"};
-    options.insert(options.end(), instruments.begin(), instruments.end());
     Screen::PushClip(rack);
     for (int c = 0; c < channels; ++c) {
         const float y = rack.Y + 1 + float(c) * cell.Y - stepsGrid.Scroll.Y;
@@ -214,13 +215,27 @@ void Editor::DrawSteps(Rect area) {
         if (c == channel) Fx::RoundedRect(line.Expand(-1), 3, palette.Accent.WithAlpha(0.18f));
         Fx::Label({rack.X + 4, top, 24, h}, std::to_string(c + 1));
         std::string here = std::size_t(c) < p.Tracks.size() ? p.Tracks[std::size_t(c)].Instrument : "";
-        int chosen = std::max(0, IndexOf(instruments, here) + 1);
-        const Rect combo{rack.X + 28, top, 120, h};
-        if (Fx::ComboBox(combo, chosen, options)) {
+        // An instrument the song does not have keeps its name in the list (marked), so it is not lost.
+        std::vector<std::string> options = {"-"};
+        options.insert(options.end(), instruments.begin(), instruments.end());
+        int chosen = IndexOf(instruments, here) + 1;
+        if (chosen == 0 && !here.empty()) {
+            options.push_back("(?) " + here);
+            chosen = int(options.size()) - 1;
+        }
+        const Rect combo{rack.X + 28, top, 86, h};
+        // The note a click on a step writes, beside the instrument.
+        const auto noteStyle = Mono(palette.TextColor.WithAlpha(0.85f), 1);
+        const std::string base = StepNote(c);
+        Text::Draw(base, {rack.X + 118, top + std::round((h - Text::Measure(base, noteStyle).Y) / 2)}, noteStyle);
+        const bool lost = options.back().starts_with("(?) ");
+        if (Fx::ComboBox(combo, chosen, options) && !(lost && chosen == int(options.size()) - 1)) {
             if (std::size_t(c) >= p.Tracks.size()) p.Tracks.resize(std::size_t(c) + 1);
             p.Tracks[std::size_t(c)].Instrument = chosen == 0 ? "" : options[std::size_t(chosen)];
             Touch();
         }
+        // The track names an instrument the song does not have: a warning outline on its combo.
+        if (lost && chosen == int(options.size()) - 1) Fx::RoundedOutline(combo, 3, Color::Hex(0xE0B040), 2);
         if (std::string payload; Fx::DropTarget(line, payload) && payload.starts_with("instrument:")) {
             if (std::size_t(c) >= p.Tracks.size()) p.Tracks.resize(std::size_t(c) + 1);
             p.Tracks[std::size_t(c)].Instrument = payload.substr(11);
@@ -259,11 +274,22 @@ void Editor::DrawSteps(Rect area) {
                 UI::Rect({box.X + 3, box.Center().Y - 1, box.Width - 6, 2}, palette.PromptText);
             } else {
                 Fx::RoundedRect(box, 3, color.Lerp(palette.InnerBackground, 0.6f * (1 - entry->Volume)), color.Lerp(Colors::Black, 0.25f));
-                const std::string name = NoteName(entry->Note);
-                if (name != note && box.Width >= 18)
-                    Text::Draw(name, {box.X + 2, box.Y + 2}, Mono(Colors::White, 1));
+                // Steps with another note than the channel's show it, without the octave if it does not fit.
+                std::string name = NoteName(entry->Note);
+                if (name != note) {
+                    if (Text::Measure(name, Mono(Colors::White, 1)).X > box.Width - 4 && name.size() > 1 &&
+                        std::isdigit(static_cast<unsigned char>(name.back())))
+                        name.pop_back();
+                    if (Text::Measure(name, Mono(Colors::White, 1)).X <= box.Width - 4)
+                        Text::Draw(name, {box.X + 2, box.Y + 2}, Mono(Colors::White, 1));
+                }
             }
         }
+    }
+    // A clear line where each bar starts (every Rows * Beats steps: also in 3/4).
+    for (int c = BarRows(song); c < p.Length; c += BarRows(song)) {
+        const Rect first = Fx::GridCell(c, 0);
+        UI::Rect({first.X - 1, first.Y, 2, float(channels) * cell.Y}, palette.Accent.WithAlpha(0.55f));
     }
     if (sounds)
         for (int c = 0; c < channels; ++c) Fx::RoundedOutline(Fx::GridCell(sounding, c).Expand(-1), 3, Color::Hex(0x7FD0FF), 2);
@@ -401,6 +427,10 @@ void Editor::DrawPianoRoll(Rect area) {
     };
     for (const NoteBlock& b : blocks) drawBlock(b, color.Lerp(palette.InnerBackground, 0.5f * (1 - b.Volume)), false);
     if (rollDrag != RollDrag::None && in.Dragging) drawBlock(rollBlock, color.WithAlpha(0.6f), true);
+    for (int c = BarRows(song); c < p.Length; c += BarRows(song)) {
+        const Rect first = Fx::GridCell(c, 0);
+        UI::Rect({first.X - 1, shown.Y, 2, shown.Height}, palette.Accent.WithAlpha(0.45f));
+    }
     if (sounds) {
         const Rect column = Fx::GridCell(sounding, 0);
         UI::Rect({column.X, shown.Y, 2, shown.Height}, Color::Hex(0x7FD0FF));
